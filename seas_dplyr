@@ -1,0 +1,23 @@
+seas_dplyr <- function(x,y,m,freq,...) {
+  asts <- ts(x, frequency=freq, start=c(y, m))
+  tryCatch(
+      { message("Running ARIMA-SEATS-X13")
+        out <- seas(asts,transform.function = "auto",
+                    automdl = "",
+                    estimate = "", 
+                    check.print = "all",
+                    ...)
+        return(final(out) %>% as.numeric)
+      },
+      error=function(cond) {
+        message('Oops, something happened, Prob. non-sesonal series')
+        message("Here's the original error message:")
+        message(cond)
+        # Choose a return value in case of error
+        return(x)
+      },
+      finally={
+        message("End of seasonal routine for specific series")
+      }
+    )    
+}
